@@ -2,12 +2,40 @@ import "./App.css";
 import CurrentWeather from "./components/current-weather/CurrentWeather";
 import Search from "./components/search/Search";
 import { OPEN_WEATHER_API_URL, OPEN_WEATHER_API_KEY } from "./api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Forecast from "./components/forecast/Forecast";
 
 function App() {
   const [currentWeather, setCurrentWeather] = useState(null);
   const [forecast, setForecast] = useState(null);
+  const [locationName, setLocationName] = useState(null);
+
+  useEffect(() => {
+    // Check if geolocation is supported
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const lat = position.coords.latitude;
+        const long = position.coords.longitude;
+
+        // Reverse geocoding to get the location name
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${long}`
+        );
+        const data = await response.json();
+        const name =
+          data?.address?.city ||
+          data?.address?.town ||
+          data?.address?.village ||
+          "Unknown location";
+        setLocationName(name); // Update the state
+
+        handleOnSearchChange({
+          value: `${lat},${long}`,
+          label: name, // use the fetched name
+        });
+      });
+    }
+  }, []);
 
   const handleOnSearchChange = (searchData) => {
     console.log(searchData);

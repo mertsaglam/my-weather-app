@@ -35,6 +35,18 @@ const Search = ({ onSearchChange }) => {
       value={search}
       onChange={handleOnChange}
       loadOptions={loadOptions}
+      styles={{
+        option: (provided, state) => ({
+          ...provided,
+          fontFamily: "Arial",
+          fontWeight: "bold",
+        }),
+        control: (provided, state) => ({
+          ...provided,
+          fontFamily: "Arial",
+          fontWeight: "bold",
+        }),
+      }}
     />
   );
 };
